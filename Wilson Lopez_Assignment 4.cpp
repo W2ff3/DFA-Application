@@ -6,7 +6,7 @@ using namespace std;
 
 bool DFA(string x)
 {
-	int input_size = x.size();
+	const size_t input_size = x.size();
 	char state = 'S';
 
 	for (int i = 0; i < input_size; i++)
@@ -17,6 +17,7 @@ bool DFA(string x)
 			{
 			case 'A': state = '1';
 				break;
+
 			default: state = '3';
 				break;
 			}
@@ -25,30 +26,22 @@ bool DFA(string x)
 		{
 			switch (x[i])
 			{
-			case 'A': 
-				if (x[i + 1] == 'T')
-					state = '1';
-				else
-					state = '3';
+			case 'A': state = '1';
 				break;
+
 			case 'T':
-				if (x[i] == x[input_size - 1])
+				if (x[i] == x.back())
 					state = '2';
 				else
 					state = '1';
 				break;
-			case 'G':
-				if (x[i + 1] == 'T')
-					state = '1';
-				else
-					state = '3';
+
+			case 'G': state = '1';
 				break;
-			case 'C':
-				if (x[i + 1] == 'T')
-					state = '1';
-				else
-					state = '3';
+
+			case 'C': state = '1';
 				break;
+
 			default: state = '3';
 				break;
 			}
@@ -64,13 +57,11 @@ bool DFA(string x)
 
 int main()
 {
-	bool tchange = false;
-	string user_input, RE, A;
-	string valid, temp, temp2;
+	string user_input, RE, A, temp;
 	vector<string> matches;
 
-	RE = "A (A + T + G + C)* T";	// The Regular Expression.
 	A = "{A, T, G, C}";				// The Alphabet for generating DNA sequences.
+	RE = "A (A + T + G + C)* T";	// The Regular Expression.
 
 	cout << "The alphabet A is " << A;
 	cout << " and the regular expression is " << RE << ".\n";
@@ -78,45 +69,32 @@ int main()
 	cout << "Enter a DNA sequence: ";
 	cin >> user_input;
 	
-	int length = user_input.size();
+	const size_t length = user_input.size();
 
+	// For each character inside the user_input string:
 	for (int c = 0; c < (length - 1); c++)
 	{
-		for (int k = c + 1; k < (length - 1); k++)
+		if (user_input[c] == 'A')
 		{
-			if (user_input[c] == 'A')
+			temp = user_input[c]; // Initialize temporary match variable with 'A'.
+
+			// Continue iterating through the user_input string, after finding 'A'.
+			for (int k = c + 1; k < (length - 1); k++)
 			{
+				temp += user_input[k]; // Add characters after 'A' inside the temporary match variable.
+
+				// Once positioned at 'T', check if temp is a pattern that matches the regular expression.
 				if (user_input[k] == 'T')
 				{
-					if (tchange == false)
-						temp = user_input[c];
-					else
-						temp = valid;
-
-					valid = temp + user_input[k];
-					if (DFA(valid) == true)
+					if (DFA(temp))
 					{
-						matches.push_back(valid);
-						tchange = true;
+						matches.push_back(temp);
+						continue;
 					}
-				}
-				else if (user_input[k] == 'A' || user_input[k] == 'G' || user_input[k] == 'C')
-				{
-					if (tchange == false)
-						temp = user_input[c];
-					else
-						temp = valid;
-					valid = temp + user_input[k];
+
 				}
 			}
 		}
-
-		// valid = temp + user_input[c + 1];
-		//if (DFA(valid) == true)
-		//{
-		//	matches.push_back(valid);
-		//	tchange = true;
-		//}
 	}
 
 	cout << endl << "The matching patterns are: " << endl;
@@ -127,7 +105,6 @@ int main()
 		else
 			cout << matches[i] << endl;
 	}
-	
 
 	return 0;
 }
