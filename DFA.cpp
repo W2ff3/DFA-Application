@@ -1,4 +1,7 @@
-// October 31, 2021
+// Wilson Lopez
+// Created on October 31, 2021
+// Updated on December 8, 2023
+
 #include <iostream>
 #include <string>
 #include <vector>
